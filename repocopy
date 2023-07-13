@@ -1,0 +1,25 @@
+#Main CentOS 7 Repo download and package script
+
+#Remove old repository.iso files
+rm -rf /data/repo/base.iso
+rm -rf /data/repo/extras.iso
+rm -rf /data/repo/updates.iso
+rm -rf /data/repo/epel.iso
+
+#Sync repositories to local storage under /data/repo
+reposync -n --repoid=base --download_path=/data/repo/base --downloadcomps --download-metadata
+reposync -n --repoid=extras --download_path=/data/repo/extras --downloadcomps --download-metadata
+reposync -n --repoid=updates --download_path=/data/repo/updates --downloadcomps --download-metadata
+reposync -n --repoid=epel --download_path=/data/repo/epel --downloadcomps --download-metadata
+
+#Prune old packages from the repositories
+rm -rf $(repomanage --old /data/repo/base)
+rm -rf $(repomanage --old /data/repo/extras)
+rm -rf $(repomanage --old /data/repo/updates)
+rm -rf $(repomanage --old /data/repo/epel)
+
+#Package repositories into a ISO file for attaching to VMRC clients or mounting as a local loopback device
+mkisofs -o /data/repo/base.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/base
+mkisofs -o /data/repo/centextras.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/extras
+mkisofs -o /data/repo/updates.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/updates
+mkisofs -o /data/repo/7epel.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/epel
