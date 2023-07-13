@@ -1,4 +1,5 @@
 #Main RHEL 7 Repo download and package script
+#YOU WILL NEED A CURRENT RED HAT SUBSCRIPTION TO COPY THESE REPOSITORIES#
 #Remove old ISO files for later re-creating
 rm -rf /data/repo/rhel7.iso
 rm -rf /data/repo/rhel7opt.iso
