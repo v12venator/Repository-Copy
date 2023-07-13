@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+#Main RHEL 8 Repos download and package script
+
+## Remove old ISOs to save space
+rm -rf /data/repo/appstream.iso
+rm -rf /data/repo/baseos.iso
+rm -rf /data/repo/codeready.iso
+rm -rf /data/repo/epel.iso
+
+## Copy down RHEL8 repos
+reposync -n --download-metadata --gpgcheck --repoid=rhel-8-for-x86_64-baseos-rpms --destdir=/data/baseos --downloadcomps --download-metadata
+reposync -n --download-metadata --gpgcheck --repoid=rhel-8-for-x86_64-appstream-rpms --destdir=/data/appstream --downloadcomps --download-metadata
+reposync -n --download-metadata --gpgcheck --repoid=codeready-builder-for-rhel-8-x86_64-rpms --destdir=/data/codeready --downloadcomps --download-metadata
+reposync -n --download-metadata --gpgcheck --repoid=epel --destdir=/data/epel --downloadcomps --download-metadata
+
+## Remove old packages from folders to save space
+rm -rf $(repomanage --old /data/baseos/rhel-8-for-x86_64-baseos-rpms)
+
+## Make ISOs from repos
+mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/baseos.iso /data/baseos/
+mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/appstream.iso /data/appstream/
+mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/codeready.iso /data/codeready/
+mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/epel.iso /data/epel/
+
