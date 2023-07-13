@@ -1,4 +1,5 @@
 #Main RHEL 7 Repo download and package script
+#Remove old ISO files for later re-creating
 rm -rf /data/repo/rhel7.iso
 rm -rf /data/repo/rhel7opt.iso
 rm -rf /data/repo/rhscl.iso
@@ -6,6 +7,8 @@ rm -rf /data/repo/base.iso
 rm -rf /data/repo/centosextras.iso
 rm -rf /data/repo/updates.iso
 rm -rf /data/repo/7epel.iso
+
+#Copy down latest repository contents
 reposync -n --repoid=rhel-7-server-optional-rpms --download_path=/data/repo/server/optional --downloadcomps --download-metadata
 reposync -n --repoid=rhel-7-server-extras-rpms --download_path=/data/repo/server/extras --downloadcomps --download-metadata
 reposync -n --repoid=rhel-7-server-rpms --download_path=/data/repo/server/main --downloadcomps --download-metadata
@@ -13,12 +16,16 @@ reposync -n --repoid=rhel-server-rhscl-7-rpms --download_path=/data/repo/server/
 reposync -n --repoid=base --download_path=/data/repo/base --downloadcomps --download-metadata
 reposync -n --repoid=extras --download_path=/data/repo/extras --downloadcomps --download-metadata
 reposync -n --repoid=epel --download_path=/data/repo/epel --downloadcomps --download-metadata
+
+#Remove old packages from directories to save space
 rm -rf $(repomanage --old /data/repo/server/main/rhel-7-server-rpms)
 rm -rf $(repomanage --old /data/repo/server/optional/rhel-7-server-optional-rpms)
 rm -rf $(repomanage --old /data/repo/server/rhscl/rhel-server-rhscl-7-rpms)
 rm -rf $(repomanage --old /data/repo/base)
 rm -rf $(repomanage --old /data/repo/updates)
 rm -rf $(repomanage --old /data/repo/epel)
+
+#Create ISO files from repository directories for attaching to VMRC clients or local loopback
 mkisofs -o /data/repo/rhel7.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/server/main
 mkisofs -o /data/repo/rhel7opt.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/server/optional
 mkisofs -o /data/repo/rhscl.iso -full-iso9660-filenames -joliet-long -iso-level 3 /data/repo/server/rhscl
