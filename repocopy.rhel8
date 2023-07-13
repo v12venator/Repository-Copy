@@ -14,9 +14,11 @@ reposync -n --download-metadata --gpgcheck --repoid=codeready-builder-for-rhel-8
 reposync -n --download-metadata --gpgcheck --repoid=epel --destdir=/data/epel --downloadcomps --download-metadata
 
 ## Remove old packages from folders to save space
+## Modularized repositories do not support removing old packages using repomanage
+## If you only want the latest and greatest every time, remove the contents of your directory and run this script
 rm -rf $(repomanage --old /data/baseos/rhel-8-for-x86_64-baseos-rpms)
 
-## Make ISOs from repos
+## Make ISOs from repo directories
 mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/baseos.iso /data/baseos/
 mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/appstream.iso /data/appstream/
 mkisofs -full-iso9660-filenames -joliet-long -iso-level 3 -o /data/repo/codeready.iso /data/codeready/
